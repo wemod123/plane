@@ -1,0 +1,66 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plane-sandbox
+  namespace: plane-sandbox
+  labels:
+    app: plane-sandbox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: plane-sandbox
+  template:
+    metadata:
+      labels:
+        app: plane-sandbox
+    spec:
+      containers:
+      - name: planefrontend
+        image: makeplane/plane-frontend:0.2.1
+        imagePullPolicy: IfNotPresent
+        env:
+         - name: NEXT_PUBLIC_API_BASE_URL
+           value: "http://planebackend:8000"
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: "1"
+          requests:
+            memory: 256Mi
+            cpu: "0.2"
+        command: ["/bin/sh","-c"]
+        args: ["node apps/app/server.js"]
+        ports:
+         - containerPort: 3000
+      - name: planebackend
+        image: makeplane/plane-backend:0.2.1
+        imagePullPolicy: IfNotPresent
+        env:
+         - name: WEB_URL
+           value: planebackend:8000
+         - name: DISABLE_COLLECTSTATIC
+           value: "1"
+         - name: DOCKERIZED
+           value: "1"
+         - name: SECRET_KEY
+           value: "praro1^m%c607u4_1z%&_ubf@rm(u-t@asnqkykecz6l^dxlzf"
+         - name: DATABASE_URL
+           value: postgres://plane:plane@plane.cdivnhdawh0f.ap-south-1.rds.amazonaws.com:5432/plane
+         - name: REDIS_URL
+           value: "redis://redis:6379/"
+         - name: DJANGO_SETTINGS_MODULE
+           value: plane.settings.production
+        command: ["/bin/sh","-c"]
+        args: ["./bin/takeoff"]
+        resources:
+          limits:
+            memory: 1Gi
+            cpu: "1"
+          requests:
+            memory: 1Gi
+            cpu: "0.2"
+        ports:
+         - containerPort: 8000
+        
