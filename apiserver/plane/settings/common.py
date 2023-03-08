@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
+    "corsheaders",
     # Inhouse apps
     "plane.analytics",
     "plane.api",
