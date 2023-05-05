@@ -119,6 +119,19 @@ class CycleViewSet(BaseViewSet):
                     filter=Q(issue_cycle__issue__state__group="backlog"),
                 )
             )
+            .annotate(total_estimates=Count("issue_cycle__issue__estimate_point"))
+            .annotate(
+                completed_estimates=Count(
+                    "issue_cycle__issue__estimate_point",
+                    filter=Q(issue_cycle__issue__state__group="completed"),
+                )
+            )
+            .annotate(
+                started_estimates=Count(
+                    "issue_cycle__issue__estimate_point",
+                    filter=Q(issue_cycle__issue__state__group="started"),
+                )
+            )
             .order_by("-is_favorite", "name")
             .distinct()
         )
@@ -508,10 +521,17 @@ class CurrentUpcomingCyclesEndpoint(BaseAPIView):
                         filter=Q(issue_cycle__issue__state__group="backlog"),
                     )
                 )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_cycle__issue__assignees",
-                        queryset=User.objects.only("avatar", "first_name", "id").distinct(),
+                .annotate(total_estimates=Count("issue_cycle__issue__estimate_point"))
+                .annotate(
+                    completed_estimates=Count(
+                        "issue_cycle__issue__estimate_point",
+                        filter=Q(issue_cycle__issue__state__group="completed"),
+                    )
+                )
+                .annotate(
+                    started_estimates=Count(
+                        "issue_cycle__issue__estimate_point",
+                        filter=Q(issue_cycle__issue__state__group="started"),
                     )
                 )
                 .order_by("name", "-is_favorite")
@@ -558,10 +578,17 @@ class CurrentUpcomingCyclesEndpoint(BaseAPIView):
                         filter=Q(issue_cycle__issue__state__group="backlog"),
                     )
                 )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_cycle__issue__assignees",
-                        queryset=User.objects.only("avatar", "first_name", "id").distinct(),
+                .annotate(total_estimates=Count("issue_cycle__issue__estimate_point"))
+                .annotate(
+                    completed_estimates=Count(
+                        "issue_cycle__issue__estimate_point",
+                        filter=Q(issue_cycle__issue__state__group="completed"),
+                    )
+                )
+                .annotate(
+                    started_estimates=Count(
+                        "issue_cycle__issue__estimate_point",
+                        filter=Q(issue_cycle__issue__state__group="started"),
                     )
                 )
                 .order_by("name", "-is_favorite")
@@ -576,7 +603,7 @@ class CurrentUpcomingCyclesEndpoint(BaseAPIView):
             )
 
         except Exception as e:
-            print(e)
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -637,10 +664,17 @@ class CompletedCyclesEndpoint(BaseAPIView):
                         filter=Q(issue_cycle__issue__state__group="backlog"),
                     )
                 )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_cycle__issue__assignees",
-                        queryset=User.objects.only("avatar", "first_name", "id").distinct(),
+                .annotate(total_estimates=Count("issue_cycle__issue__estimate_point"))
+                .annotate(
+                    completed_estimates=Count(
+                        "issue_cycle__issue__estimate_point",
+                        filter=Q(issue_cycle__issue__state__group="completed"),
+                    )
+                )
+                .annotate(
+                    started_estimates=Count(
+                        "issue_cycle__issue__estimate_point",
+                        filter=Q(issue_cycle__issue__state__group="started"),
                     )
                 )
                 .order_by("name", "-is_favorite")
@@ -718,10 +752,17 @@ class DraftCyclesEndpoint(BaseAPIView):
                         filter=Q(issue_cycle__issue__state__group="backlog"),
                     )
                 )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_cycle__issue__assignees",
-                        queryset=User.objects.only("avatar", "first_name", "id").distinct(),
+                .annotate(total_estimates=Count("issue_cycle__issue__estimate_point"))
+                .annotate(
+                    completed_estimates=Count(
+                        "issue_cycle__issue__estimate_point",
+                        filter=Q(issue_cycle__issue__state__group="completed"),
+                    )
+                )
+                .annotate(
+                    started_estimates=Count(
+                        "issue_cycle__issue__estimate_point",
+                        filter=Q(issue_cycle__issue__state__group="started"),
                     )
                 )
                 .order_by("name", "-is_favorite")
