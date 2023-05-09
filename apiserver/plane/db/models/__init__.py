@@ -69,3 +69,4 @@ from .page import Page, PageBlock, PageFavorite, PageLabel
 from .estimate import Estimate, EstimatePoint
 
 from .analytic import AnalyticView
+from .inbox import Inbox, InboxIssue

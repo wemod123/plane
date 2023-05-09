@@ -148,3 +148,4 @@ from .analytic import (
     ExportAnalyticsEndpoint,
     DefaultAnalyticsEndpoint,
 )
+from .inbox import InboxViewSet, InboxIssueViewSet
