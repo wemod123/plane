@@ -13,14 +13,14 @@ import issuesService from "services/issues.service";
 import inboxServices from "services/inbox.service";
 // hooks
 import useUser from "hooks/use-user";
+import useIssuesView from "hooks/use-issues-view";
+import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useToast from "hooks/use-toast";
 // components
 import { IssueForm } from "components/issues";
-// hooks
-import useIssuesView from "hooks/use-issues-view";
 // types
 import type { IIssue } from "types";
-// fetch keys
+// fetch-keys
 import {
   PROJECT_ISSUES_DETAILS,
   PROJECT_ISSUES_LIST,
@@ -58,10 +58,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const [activeProject, setActiveProject] = useState<string | null>(null);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, inboxId } = router.query;
-
-  const { issueView, params } = useIssuesView();
-
+  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+  const { params: calendarParams } = useCalendarIssuesView();
   if (cycleId) prePopulateData = { ...prePopulateData, cycle: cycleId as string };
   if (moduleId) prePopulateData = { ...prePopulateData, module: moduleId as string };
 
@@ -130,7 +128,16 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       });
   };
 
+  const calendarFetchKey = cycleId
+    ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), calendarParams)
+    : moduleId
+    ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), calendarParams)
+    : viewId
+    ? VIEW_ISSUES(viewId.toString(), calendarParams)
+    : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", calendarParams);
+
   const createIssue = async (payload: Partial<IIssue>) => {
+
     if (inboxId)
       await inboxServices
         .createInboxIssue(workspaceSlug as string, projectId as string, inboxId as string, {
@@ -163,7 +170,23 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
             type: "error",
             title: "Error!",
             message: "Issue could not be created. Please try again.",
-          });
+          }
+
+    await issuesService
+      .createIssues(workspaceSlug as string, activeProject ?? "", payload)
+      .then((res) => {
+        mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
+        if (issueView === "calendar") mutate(calendarFetchKey);
+
+        if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
+        if (payload.module && payload.module !== "") addIssueToModule(res.id, payload.module);
+
+        if (!createMore) handleClose();
+
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Issue created successfully.",
         });
     else
       await issuesService
@@ -201,29 +224,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         if (isUpdatingSingleIssue) {
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
         } else {
-          if (issueView === "calendar") {
-            const calendarFetchKey = cycleId
-              ? CYCLE_CALENDAR_ISSUES(projectId as string, cycleId as string)
-              : moduleId
-              ? MODULE_CALENDAR_ISSUES(projectId as string, moduleId as string)
-              : PROJECT_CALENDAR_ISSUES(projectId as string);
-
-            mutate<IIssue[]>(calendarFetchKey, (prevData) =>
-              (prevData ?? []).map((i) => {
-                if (i.id === res.id) return { ...i, ...res };
-                return i;
-              })
-            );
-          } else {
-            mutate<IIssue[]>(
-              PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params),
-              (prevData) =>
-                (prevData ?? []).map((i) => {
-                  if (i.id === res.id) return { ...i, ...res };
-                  return i;
-                })
-            );
-          }
+          if (issueView === "calendar") mutate(calendarFetchKey);
+          else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
         }
 
         if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);

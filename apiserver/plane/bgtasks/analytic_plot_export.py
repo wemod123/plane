@@ -95,7 +95,6 @@ def analytic_export_task(email, data, slug):
 
             text_content = strip_tags(html_content)
             csv_buffer.seek(0)
-            print(csv_buffer.read())
             msg = EmailMultiAlternatives(
                 subject, text_content, settings.EMAIL_FROM, [email]
             )
