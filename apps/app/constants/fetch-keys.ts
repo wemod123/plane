@@ -120,6 +120,10 @@ export const VIEW_ISSUES = (viewId: string, params: any) => {
   return `VIEW_ISSUES_${viewId.toUpperCase()}_${paramsKey.toUpperCase()}`;
 };
 
+export const INBOX_LIST = (projectId: string) => `VIEWS_LIST_${projectId.toUpperCase()}`;
+export const INBOX_ISSUES = (inboxId: string) => `VIEW_ISSUES_${inboxId.toUpperCase()}`;
+export const INBOX_DETAILS = (inboxId: string) => `VIEW_DETAILS_${inboxId.toUpperCase()}`;
+
 // Issues
 export const ISSUE_DETAILS = (issueId: string) => `ISSUE_DETAILS_${issueId.toUpperCase()}`;
 export const SUB_ISSUES = (issueId: string) => `SUB_ISSUES_${issueId.toUpperCase()}`;

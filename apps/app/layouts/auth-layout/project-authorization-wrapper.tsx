@@ -56,7 +56,10 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
   const [analyticsModal, setAnalyticsModal] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  // const { workspaceSlug, projectId } = router.query;
+
+  const projectId = "f5462100-2156-41a9-af13-50d76077b01d";
+  const workspaceSlug = "laland";
 
   const { issueView } = useIssuesView();
 

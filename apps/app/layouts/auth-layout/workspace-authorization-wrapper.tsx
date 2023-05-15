@@ -52,7 +52,8 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
   const [analyticsModal, setAnalyticsModal] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  // const { workspaceSlug } = router.query;
+  const workspaceSlug = "laland";
 
   const { data: workspaceMemberMe, error } = useSWR(
     workspaceSlug ? WORKSPACE_MEMBERS_ME(workspaceSlug as string) : null,

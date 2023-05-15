@@ -148,6 +148,10 @@ from plane.api.views import (
     # Release Notes
     ReleaseNotesEndpoint,
     ## End Release Notes
+    # Inbox
+    InboxViewSet,
+    InboxIssueViewSet,
+    ## End Inbox
     # Analytics
     AnalyticsEndpoint,
     AnalyticViewViewset,
@@ -155,10 +159,6 @@ from plane.api.views import (
     ExportAnalyticsEndpoint,
     DefaultAnalyticsEndpoint,
     ## End Analytics
-    # Inbox
-    InboxViewSet,
-    InboxIssueViewSet,
-    ## End Inbox
 )
 
 
@@ -1296,40 +1296,6 @@ urlpatterns = [
         name="release-notes",
     ),
     ## End Release Notes
-    # Analytics
-    path(
-        "workspaces/<str:slug>/analytics/",
-        AnalyticsEndpoint.as_view(),
-        name="plane-analytics",
-    ),
-    path(
-        "workspaces/<str:slug>/analytic-view/",
-        AnalyticViewViewset.as_view({"get": "list", "post": "create"}),
-        name="analytic-view",
-    ),
-    path(
-        "workspaces/<str:slug>/analytic-view/<uuid:pk>/",
-        AnalyticViewViewset.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
-        name="analytic-view",
-    ),
-    path(
-        "workspaces/<str:slug>/saved-analytic-view/<uuid:analytic_id>/",
-        SavedAnalyticEndpoint.as_view(),
-        name="saved-analytic-view",
-    ),
-    path(
-        "workspaces/<str:slug>/export-analytics/",
-        ExportAnalyticsEndpoint.as_view(),
-        name="export-analytics",
-    ),
-    path(
-        "workspaces/<str:slug>/default-analytics/",
-        DefaultAnalyticsEndpoint.as_view(),
-        name="default-analytics",
-    ),
-    ## End Analytics
     # Inbox
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/inboxes/",
@@ -1374,4 +1340,38 @@ urlpatterns = [
         name="inbox-issue",
     ),
     ## End Inbox
+    # Analytics
+    path(
+        "workspaces/<str:slug>/analytics/",
+        AnalyticsEndpoint.as_view(),
+        name="plane-analytics",
+    ),
+    path(
+        "workspaces/<str:slug>/analytic-view/",
+        AnalyticViewViewset.as_view({"get": "list", "post": "create"}),
+        name="analytic-view",
+    ),
+    path(
+        "workspaces/<str:slug>/analytic-view/<uuid:pk>/",
+        AnalyticViewViewset.as_view(
+            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
+        ),
+        name="analytic-view",
+    ),
+    path(
+        "workspaces/<str:slug>/saved-analytic-view/<uuid:analytic_id>/",
+        SavedAnalyticEndpoint.as_view(),
+        name="saved-analytic-view",
+    ),
+    path(
+        "workspaces/<str:slug>/export-analytics/",
+        ExportAnalyticsEndpoint.as_view(),
+        name="export-analytics",
+    ),
+    path(
+        "workspaces/<str:slug>/default-analytics/",
+        DefaultAnalyticsEndpoint.as_view(),
+        name="default-analytics",
+    ),
+    ## End Analytics
 ]

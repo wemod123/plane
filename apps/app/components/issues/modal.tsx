@@ -10,6 +10,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import projectService from "services/project.service";
 import modulesService from "services/modules.service";
 import issuesService from "services/issues.service";
+import inboxServices from "services/inbox.service";
 // hooks
 import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
@@ -31,6 +32,7 @@ import {
   MODULE_ISSUES_WITH_PARAMS,
   CYCLE_DETAILS,
   MODULE_DETAILS,
+  INBOX_ISSUES,
   PROJECT_CALENDAR_ISSUES,
   CYCLE_CALENDAR_ISSUES,
   MODULE_CALENDAR_ISSUES,
@@ -56,7 +58,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const [activeProject, setActiveProject] = useState<string | null>(null);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, inboxId } = router.query;
 
   const { issueView, params } = useIssuesView();
 
@@ -129,43 +131,69 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   };
 
   const createIssue = async (payload: Partial<IIssue>) => {
-    await issuesService
-      .createIssues(workspaceSlug as string, activeProject ?? "", payload)
-      .then((res) => {
-        mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
+    if (inboxId)
+      await inboxServices
+        .createInboxIssue(workspaceSlug as string, projectId as string, inboxId as string, {
+          issue: payload,
+        })
+        .then((res) => {
+          mutate(INBOX_ISSUES(inboxId as string));
+          if (!createMore) handleClose();
 
-        if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
-        if (payload.module && payload.module !== "") addIssueToModule(res.id, payload.module);
+          setToastAlert({
+            type: "success",
+            title: "Success!",
+            message: "Issue created successfully.",
+          });
 
-        const calendarFetchKey = cycleId
-          ? CYCLE_CALENDAR_ISSUES(projectId as string, cycleId as string)
-          : moduleId
-          ? MODULE_CALENDAR_ISSUES(projectId as string, moduleId as string)
-          : PROJECT_CALENDAR_ISSUES(projectId as string);
+          const calendarFetchKey = cycleId
+            ? CYCLE_CALENDAR_ISSUES(projectId as string, cycleId as string)
+            : moduleId
+            ? MODULE_CALENDAR_ISSUES(projectId as string, moduleId as string)
+            : PROJECT_CALENDAR_ISSUES(projectId as string);
 
-        mutate<IIssue[]>(calendarFetchKey);
+          mutate<IIssue[]>(calendarFetchKey);
 
-        if (!createMore) handleClose();
+          if (!createMore) handleClose();
 
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Issue created successfully.",
+          if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
+        })
+        .catch(() => {
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Issue could not be created. Please try again.",
+          });
         });
+    else
+      await issuesService
+        .createIssues(workspaceSlug as string, activeProject ?? "", payload)
+        .then((res) => {
+          mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
 
-        if (payload.assignees_list?.some((assignee) => assignee === user?.id)) mutate(USER_ISSUE);
+          if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
+          if (payload.module && payload.module !== "") addIssueToModule(res.id, payload.module);
 
-        if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Issue could not be created. Please try again.",
+          if (!createMore) handleClose();
+
+          setToastAlert({
+            type: "success",
+            title: "Success!",
+            message: "Issue created successfully.",
+          });
+
+          if (payload.assignees_list?.some((assignee) => assignee === user?.id)) mutate(USER_ISSUE);
+
+          if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
+        })
+        .catch(() => {
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Issue could not be created. Please try again.",
+          });
         });
-      });
   };
-
   const updateIssue = async (payload: Partial<IIssue>) => {
     await issuesService
       .updateIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload)
