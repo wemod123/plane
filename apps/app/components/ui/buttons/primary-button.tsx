@@ -1,36 +1,27 @@
 // types
+import { forwardRef } from "react";
 import { ButtonProps } from "./type";
 
-export const PrimaryButton: React.FC<ButtonProps> = ({
-  children,
-  className = "",
-  onClick,
-  type = "button",
-  disabled = false,
-  loading = false,
-  size = "sm",
-  outline = false,
-}) => (
-  <button
-    type={type}
-    className={`${className} border border-brand-accent font-medium duration-300 ${
-      size === "sm"
-        ? "rounded px-3 py-2 text-xs"
-        : size === "md"
-        ? "rounded-md px-3.5 py-2 text-sm"
-        : "rounded-lg px-4 py-2 text-base"
-    } ${
-      disabled
-        ? "cursor-not-allowed bg-opacity-70 border-opacity-70 hover:bg-opacity-70 hover:border-opacity-70"
-        : ""
-    } ${
-      outline
-        ? "bg-transparent text-brand-accent hover:bg-brand-accent hover:text-white"
-        : "text-white bg-brand-accent hover:border-opacity-90 hover:bg-opacity-90"
-    }  ${loading ? "cursor-wait" : ""}`}
-    onClick={onClick}
-    disabled={disabled || loading}
-  >
-    {children}
-  </button>
+export const PrimaryButton = forwardRef<HTMLButtonElement, ButtonProps>(
+  (
+    { className, disabled, children, loading = false, size = "sm", outline = false, ...rest },
+    ref
+  ) => (
+    <button
+      className={`border border-brand-accent-100 inline-flex items-center text-white font-medium rounded-md duration-300 ${
+        size === "sm"
+          ? "px-3 py-1.5 text-xs gap-1.5"
+          : size === "md"
+          ? "px-4 py-2.5 text-sm gap-1.5"
+          : "px-5 py-3 text-base gap-2"
+      } ${loading ? "cursor-wait" : ""} ${className}`}
+      disabled={disabled || loading}
+      ref={ref}
+      {...rest}
+    >
+      {children}
+    </button>
+  )
 );
+
+PrimaryButton.displayName = "PrimaryButton";
