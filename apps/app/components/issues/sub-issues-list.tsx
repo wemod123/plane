@@ -311,10 +311,10 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user, disabled = false }
         !isNotAllowed && (
           <CustomMenu
             label={
-              <>
-                <PlusIcon className="h-3 w-3" />
+              <div className="flex items-center gap-2 whitespace-nowrap">
+                <PlusIcon className="h-3 w-3 flex-shrink-0" />
                 Add sub-issue
-              </>
+              </div>
             }
             position="left"
             noBorder

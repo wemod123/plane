@@ -7,24 +7,29 @@ import useSWR from "swr";
 // services
 import stateService from "services/state.service";
 // ui
-import { CustomSearchSelect } from "components/ui";
+import { CustomSearchSelect, DropdownProps } from "components/ui";
 // icons
-import { PlusIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
+import { Squares2X2Icon } from "@heroicons/react/24/outline";
 import { getStateGroupIcon } from "components/icons";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // fetch keys
 import { STATES_LIST } from "constants/fetch-keys";
 
-type Props = {
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+type Props = DropdownProps & {
   value: string;
   onChange: (value: string) => void;
   projectId: string;
+  footerOption?: JSX.Element;
 };
 
-export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, projectId }) => {
-  // states
+export const IssueStateSelect: React.FC<Props> = ({
+  value,
+  onChange,
+  projectId,
+  footerOption,
+  ...rest
+}) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -69,17 +74,7 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
             : currentDefaultState?.name ?? <span className="text-custom-text-200">State</span>}
         </div>
       }
-      footerOption={
-        <button
-          type="button"
-          className="flex w-full select-none items-center gap-2 rounded px-1 py-1.5 text-xs text-custom-text-200 hover:bg-custom-background-80"
-          onClick={() => setIsOpen(true)}
-        >
-          <PlusIcon className="h-4 w-4" aria-hidden="true" />
-          Create New State
-        </button>
-      }
-      noChevron
+      {...rest}
     />
   );
 };

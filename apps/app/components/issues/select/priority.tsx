@@ -1,18 +1,18 @@
 import React from "react";
 
 // ui
-import { CustomSelect } from "components/ui";
+import { CustomSelect, DropdownProps } from "components/ui";
 // icons
 import { getPriorityIcon } from "components/icons/priority-icon";
 // constants
 import { PRIORITIES } from "constants/project";
 
-type Props = {
+type Props = DropdownProps & {
   value: string | null;
   onChange: (value: string) => void;
 };
 
-export const IssuePrioritySelect: React.FC<Props> = ({ value, onChange }) => (
+export const IssuePrioritySelect: React.FC<Props> = ({ value, onChange, ...rest }) => (
   <CustomSelect
     value={value}
     label={
@@ -21,12 +21,12 @@ export const IssuePrioritySelect: React.FC<Props> = ({ value, onChange }) => (
           {getPriorityIcon(value, `text-xs ${value ? "" : "text-custom-text-200"}`)}
         </span>
         <span className={`${value ? "" : "text-custom-text-200"} capitalize`}>
-          {value ?? "Priority"}
+          {value ?? "None"}
         </span>
       </div>
     }
     onChange={onChange}
-    noChevron
+    {...rest}
   >
     {PRIORITIES.map((priority) => (
       <CustomSelect.Option key={priority} value={priority}>

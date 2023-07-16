@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // react-hook-form
-import { useForm, Controller, UseFormWatch, Control } from "react-hook-form";
+import { useForm, Controller, UseFormWatch } from "react-hook-form";
 // react-color
 import { TwitterPicker } from "react-color";
 // headless ui
@@ -28,12 +28,12 @@ import {
   SidebarCycleSelect,
   SidebarModuleSelect,
   SidebarParentSelect,
-  SidebarPrioritySelect,
-  SidebarStateSelect,
   SidebarEstimateSelect,
+  IssuePrioritySelect,
+  IssueStateSelect,
 } from "components/issues";
 // ui
-import { Input, Spinner, CustomDatePicker } from "components/ui";
+import { Input, Spinner, CustomDatePicker, Icon } from "components/ui";
 // icons
 import {
   TagIcon,
@@ -50,7 +50,7 @@ import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import type { ICycle, IIssue, IIssueLabels, IIssueLink, IModule } from "types";
 // fetch-keys
-import { PROJECT_ISSUE_LABELS, PROJECT_ISSUES_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
+import { PROJECT_ISSUE_LABELS, ISSUE_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   control: any;
@@ -101,15 +101,6 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
   const { memberRole } = useProjectMyMembership();
 
   const { setToastAlert } = useToast();
-
-  const { data: issues } = useSWR(
-    workspaceSlug && projectId
-      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
-      : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssues(workspaceSlug as string, projectId as string)
-      : null
-  );
 
   const { data: issueLabels, mutate: issueLabelMutate } = useSWR<IIssueLabels[]>(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
@@ -314,18 +305,30 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
           {showFirstSection && (
             <div className="py-1">
               {(fieldsToShow.includes("all") || fieldsToShow.includes("state")) && (
-                <Controller
-                  control={control}
-                  name="state"
-                  render={({ field: { value } }) => (
-                    <SidebarStateSelect
-                      value={value}
-                      onChange={(val: string) => submitChanges({ state: val })}
-                      userAuth={memberRole}
-                      disabled={uneditable}
-                    />
-                  )}
-                />
+                <>
+                  <div className="flex flex-wrap items-center py-2">
+                    <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
+                      <Icon iconName="grid_view" />
+                      <p>State</p>
+                    </div>
+                    <div className="sm:basis-1/2">
+                      <Controller
+                        control={control}
+                        name="state"
+                        render={({ field: { value } }) => (
+                          <IssueStateSelect
+                            value={value}
+                            onChange={(val: string) => submitChanges({ state: val })}
+                            width="w-full"
+                            position="right"
+                            projectId={projectId as string}
+                            disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                          />
+                        )}
+                      />
+                    </div>
+                  </div>
+                </>
               )}
               {(fieldsToShow.includes("all") || fieldsToShow.includes("assignee")) && (
                 <Controller
@@ -342,18 +345,27 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 />
               )}
               {(fieldsToShow.includes("all") || fieldsToShow.includes("priority")) && (
-                <Controller
-                  control={control}
-                  name="priority"
-                  render={({ field: { value } }) => (
-                    <SidebarPrioritySelect
-                      value={value}
-                      onChange={(val: string) => submitChanges({ priority: val })}
-                      userAuth={memberRole}
-                      disabled={uneditable}
+                <div className="flex flex-wrap items-center py-2">
+                  <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
+                    <Icon iconName="signal_cellular_alt" />
+                    <p>Priority</p>
+                  </div>
+                  <div className="sm:basis-1/2">
+                    <Controller
+                      control={control}
+                      name="priority"
+                      render={({ field: { value } }) => (
+                        <IssuePrioritySelect
+                          value={value}
+                          onChange={(val: string) => submitChanges({ priority: val })}
+                          width="w-full"
+                          position="right"
+                          disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                        />
+                      )}
                     />
-                  )}
-                />
+                  </div>
+                </div>
               )}
               {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) && (
                 <Controller

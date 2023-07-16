@@ -21,12 +21,13 @@ import {
   IssuePrioritySelect,
   IssueProjectSelect,
   IssueStateSelect,
-} from "components/issues/select";
+} from "components/issues";
 import { CreateStateModal } from "components/states";
 import { CreateLabelModal } from "components/labels";
 // ui
 import {
   CustomMenu,
+  Icon,
   Input,
   Loader,
   PrimaryButton,
@@ -424,10 +425,20 @@ export const IssueForm: FC<IssueFormProps> = ({
                     name="state"
                     render={({ field: { value, onChange } }) => (
                       <IssueStateSelect
-                        setIsOpen={setStateModal}
                         value={value}
                         onChange={onChange}
                         projectId={projectId}
+                        footerOption={
+                          <button
+                            type="button"
+                            className="flex w-full select-none items-center gap-2 rounded px-1 py-1.5 text-xs text-custom-text-200 hover:bg-custom-background-80"
+                            onClick={() => setStateModal(true)}
+                          >
+                            <Icon iconName="add" />
+                            Create New State
+                          </button>
+                        }
+                        noChevron
                       />
                     )}
                   />
@@ -437,7 +448,7 @@ export const IssueForm: FC<IssueFormProps> = ({
                     control={control}
                     name="priority"
                     render={({ field: { value, onChange } }) => (
-                      <IssuePrioritySelect value={value} onChange={onChange} />
+                      <IssuePrioritySelect value={value} onChange={onChange} noChevron />
                     )}
                   />
                 )}

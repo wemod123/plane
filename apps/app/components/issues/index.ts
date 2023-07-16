@@ -1,4 +1,5 @@
 export * from "./comment";
+export * from "./select";
 export * from "./sidebar-select";
 export * from "./view-select";
 export * from "./activity";
