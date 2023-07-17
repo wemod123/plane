@@ -22,7 +22,6 @@ import { useProjectMyMembership } from "contexts/project-member.context";
 import { LinkModal, LinksList } from "components/core";
 import {
   DeleteIssueModal,
-  SidebarAssigneeSelect,
   SidebarBlockedSelect,
   SidebarBlockerSelect,
   SidebarCycleSelect,
@@ -31,6 +30,7 @@ import {
   SidebarEstimateSelect,
   IssuePrioritySelect,
   IssueStateSelect,
+  IssueAssigneeSelect,
 } from "components/issues";
 // ui
 import { Input, Spinner, CustomDatePicker, Icon } from "components/ui";
@@ -331,18 +331,28 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 </>
               )}
               {(fieldsToShow.includes("all") || fieldsToShow.includes("assignee")) && (
-                <Controller
-                  control={control}
-                  name="assignees_list"
-                  render={({ field: { value } }) => (
-                    <SidebarAssigneeSelect
-                      value={value}
-                      onChange={(val: string[]) => submitChanges({ assignees_list: val })}
-                      userAuth={memberRole}
-                      disabled={uneditable}
+                <div className="flex flex-wrap items-center py-2">
+                  <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
+                    <Icon iconName="group" />
+                    <p>Assignees</p>
+                  </div>
+                  <div className="sm:basis-1/2">
+                    <Controller
+                      control={control}
+                      name="assignees_list"
+                      render={({ field: { value } }) => (
+                        <IssueAssigneeSelect
+                          value={value}
+                          onChange={(val: string[]) => submitChanges({ assignees_list: val })}
+                          disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                          projectId={projectId as string}
+                          position="right"
+                          multiple
+                        />
+                      )}
                     />
-                  )}
-                />
+                  </div>
+                </div>
               )}
               {(fieldsToShow.includes("all") || fieldsToShow.includes("priority")) && (
                 <div className="flex flex-wrap items-center py-2">

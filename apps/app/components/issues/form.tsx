@@ -461,6 +461,8 @@ export const IssueForm: FC<IssueFormProps> = ({
                         projectId={projectId}
                         value={value}
                         onChange={onChange}
+                        multiple
+                        noChevron
                       />
                     )}
                   />
