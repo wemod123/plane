@@ -31,9 +31,10 @@ import {
   SidebarLabelSelect,
 } from "components/issues";
 // ui
-import { CustomDatePicker, Icon } from "components/ui";
+import { CustomDatePicker } from "components/ui";
 // icons
 import { LinkIcon, CalendarDaysIcon, TrashIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { NotificationsOutlined } from "@mui/icons-material";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
@@ -237,20 +238,20 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
               (fieldsToShow.includes("all") || fieldsToShow.includes("subscribe")) && (
                 <button
                   type="button"
-                  className="rounded-md flex items-center gap-2 border border-custom-primary-100 px-2 py-1 text-xs text-custom-primary-100 shadow-sm duration-300 focus:outline-none"
+                  className="rounded-md flex items-center gap-1 border border-custom-primary-100 px-2 py-1 text-xs text-custom-primary-100 shadow-sm duration-300 focus:outline-none"
                   onClick={() => {
                     if (subscribed) handleUnsubscribe();
                     else handleSubscribe();
                   }}
                 >
-                  <Icon iconName="notifications" />
+                  <NotificationsOutlined fontSize="small" />
                   {loading ? "Loading..." : subscribed ? "Unsubscribe" : "Subscribe"}
                 </button>
               )}
             {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
               <button
                 type="button"
-                className="rounded-md border border-custom-border-200 p-2 shadow-sm duration-300 hover:bg-custom-background-90 focus:border-custom-primary focus:outline-none focus:ring-1 focus:ring-custom-primary"
+                className="rounded-md border border-custom-border-300 p-2 shadow-sm duration-300 hover:bg-custom-background-90 focus:border-custom-primary focus:outline-none focus:ring-1 focus:ring-custom-primary"
                 onClick={handleCopyText}
               >
                 <LinkIcon className="h-3.5 w-3.5" />

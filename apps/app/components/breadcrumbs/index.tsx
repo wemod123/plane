@@ -1,9 +1,10 @@
 import * as React from "react";
+
 import { useRouter } from "next/router";
 import Link from "next/link";
+
 // icons
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
-import { Icon } from "components/ui";
+import { KeyboardBackspaceOutlined } from "@mui/icons-material";
 
 type BreadcrumbsProps = {
   children: any;
@@ -13,21 +14,16 @@ const Breadcrumbs = ({ children }: BreadcrumbsProps) => {
   const router = useRouter();
 
   return (
-    <>
-      <div className="flex items-center">
-        <button
-          type="button"
-          className="group grid h-7 w-7 flex-shrink-0 cursor-pointer place-items-center rounded border border-custom-sidebar-border-200 text-center text-sm hover:bg-custom-sidebar-background-90"
-          onClick={() => router.back()}
-        >
-          <Icon
-            iconName="keyboard_backspace"
-            className="text-base leading-4 text-custom-sidebar-text-200 group-hover:text-custom-sidebar-text-100"
-          />
-        </button>
-        {children}
-      </div>
-    </>
+    <div className="flex items-center">
+      <button
+        type="button"
+        className="group grid h-7 w-7 flex-shrink-0 cursor-pointer place-items-center rounded border border-custom-sidebar-border-300 text-custom-text-200 hover:text-custom-text-100 text-center text-sm hover:bg-custom-sidebar-background-90"
+        onClick={() => router.back()}
+      >
+        <KeyboardBackspaceOutlined fontSize="small" />
+      </button>
+      {children}
+    </div>
   );
 };
 

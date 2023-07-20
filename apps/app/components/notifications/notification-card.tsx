@@ -5,10 +5,15 @@ import { useRouter } from "next/router";
 
 // hooks
 import useToast from "hooks/use-toast";
-
+// ui
+import { CustomMenu, Tooltip } from "components/ui";
 // icons
-import { CustomMenu, Icon, Tooltip } from "components/ui";
-
+import {
+  ArchiveOutlined,
+  ChatBubbleOutlineOutlined,
+  ScheduleOutlined,
+  UnarchiveOutlined,
+} from "@mui/icons-material";
 // helper
 import { stripHTML, replaceUnderscoreIfSnakeCase, truncateText } from "helpers/string.helper";
 import {
@@ -18,7 +23,6 @@ import {
   renderShortDate,
   renderShortDateWithYearFormat,
 } from "helpers/date-time.helper";
-
 // type
 import type { IUserNotification } from "types";
 
@@ -160,7 +164,11 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
           </p>
           {notification.snoozed_till ? (
             <p className="text-custom-text-300 flex items-center justify-end gap-x-1 flex-shrink-0">
-              <Icon iconName="schedule" className="!text-base -my-0.5" />
+              <ScheduleOutlined
+                sx={{
+                  fontSize: 14,
+                }}
+              />
               <span>
                 Till {renderShortDate(notification.snoozed_till)},{" "}
                 {render12HourFormatTime(notification.snoozed_till)}
@@ -173,12 +181,12 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
           )}
         </div>
       </div>
-      <div className="absolute py-1 gap-x-3 right-3 top-3 hidden group-hover:flex">
+      <div className="absolute py-1 gap-x-3 right-3 top-2 hidden group-hover:flex">
         {[
           {
             id: 1,
             name: notification.read_at ? "Mark as unread" : "Mark as read",
-            icon: "chat_bubble",
+            Icon: ChatBubbleOutlineOutlined,
             onClick: () => {
               markNotificationReadStatus(notification.id).then(() => {
                 setToastAlert({
@@ -193,7 +201,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
           {
             id: 2,
             name: notification.archived_at ? "Unarchive" : "Archive",
-            icon: notification.archived_at ? "unarchive" : "archive",
+            Icon: notification.archived_at ? UnarchiveOutlined : ArchiveOutlined,
             onClick: () => {
               markNotificationArchivedStatus(notification.id).then(() => {
                 setToastAlert({
@@ -214,9 +222,13 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                 item.onClick();
               }}
               key={item.id}
-              className="text-sm flex w-full items-center gap-x-2 bg-custom-background-80 hover:bg-custom-background-100 p-0.5 rounded outline-none"
+              className="grid place-items-center bg-custom-background-80 hover:bg-custom-background-100 h-6 w-6 rounded outline-none"
             >
-              <Icon iconName={item.icon} className="h-5 w-5 text-custom-text-300" />
+              <item.Icon
+                sx={{
+                  fontSize: 16,
+                }}
+              />
             </button>
           </Tooltip>
         ))}
@@ -230,9 +242,13 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
               customButton={
                 <button
                   type="button"
-                  className="text-sm flex w-full items-center gap-x-2 bg-custom-background-80 hover:bg-custom-background-100 p-0.5 rounded"
+                  className="grid place-items-center bg-custom-background-80 hover:bg-custom-background-100 h-6 w-6 rounded"
                 >
-                  <Icon iconName="schedule" className="h-5 w-5 text-custom-text-300" />
+                  <ScheduleOutlined
+                    sx={{
+                      fontSize: 16,
+                    }}
+                  />
                 </button>
               }
               optionsClassName="!z-20"

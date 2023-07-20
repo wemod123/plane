@@ -2,100 +2,114 @@ import React from "react";
 
 import Link from "next/link";
 
+// components
+import RemirrorRichTextEditor from "components/rich-text-editor";
+// icons
+import { ArrowTopRightOnSquareIcon, ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
 // icons
 import {
-  ArrowTopRightOnSquareIcon,
-  ChatBubbleLeftEllipsisIcon,
-  Squares2X2Icon,
-} from "@heroicons/react/24/outline";
-import { BlockedIcon, BlockerIcon } from "components/icons";
-import { Icon } from "components/ui";
+  ArchiveOutlined,
+  AttachFileOutlined,
+  CalendarTodayOutlined,
+  ChangeHistoryOutlined,
+  ChatOutlined,
+  ContrastOutlined,
+  DatasetOutlined,
+  DeleteOutlineOutlined,
+  GridViewOutlined,
+  GroupOutlined,
+  HistoryOutlined,
+  LinkOutlined,
+  SellOutlined,
+  SignalCellularAltOutlined,
+  SupervisedUserCircleOutlined,
+} from "@mui/icons-material";
 // helpers
 import { renderShortDateWithYearFormat, timeAgo } from "helpers/date-time.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import RemirrorRichTextEditor from "components/rich-text-editor";
+import { MaterialIcon } from "types";
 
 const activityDetails: {
   [key: string]: {
     message?: string;
-    icon: JSX.Element;
+    Icon: MaterialIcon;
   };
 } = {
   assignee: {
     message: "removed the assignee",
-    icon: <Icon iconName="group" className="!text-sm" aria-hidden="true" />,
+    Icon: GroupOutlined,
   },
   assignees: {
     message: "added a new assignee",
-    icon: <Icon iconName="group" className="!text-sm" aria-hidden="true" />,
+    Icon: GroupOutlined,
   },
   blocks: {
     message: "marked this issue being blocked by",
-    icon: <BlockedIcon height="12" width="12" color="#6b7280" />,
+    Icon: GroupOutlined,
   },
   blocking: {
     message: "marked this issue is blocking",
-    icon: <BlockerIcon height="12" width="12" color="#6b7280" />,
+    Icon: GroupOutlined,
   },
   cycles: {
     message: "set the cycle to",
-    icon: <Icon iconName="contrast" className="!text-sm" aria-hidden="true" />,
+    Icon: ContrastOutlined,
   },
   labels: {
-    icon: <Icon iconName="sell" className="!text-sm" aria-hidden="true" />,
+    Icon: SellOutlined,
   },
   modules: {
     message: "set the module to",
-    icon: <Icon iconName="dataset" className="!text-sm" aria-hidden="true" />,
+    Icon: DatasetOutlined,
   },
   state: {
     message: "set the state to",
-    icon: <Squares2X2Icon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />,
+    Icon: GridViewOutlined,
   },
   priority: {
     message: "set the priority to",
-    icon: <Icon iconName="signal_cellular_alt" className="!text-sm" aria-hidden="true" />,
+    Icon: SignalCellularAltOutlined,
   },
   name: {
     message: "set the name to",
-    icon: <Icon iconName="chat" className="!text-sm" aria-hidden="true" />,
+    Icon: ChatOutlined,
   },
   description: {
     message: "updated the description.",
-    icon: <Icon iconName="chat" className="!text-sm" aria-hidden="true" />,
+    Icon: ChatOutlined,
   },
   estimate_point: {
     message: "set the estimate point to",
-    icon: <Icon iconName="change_history" className="!text-sm" aria-hidden="true" />,
+    Icon: ChangeHistoryOutlined,
   },
   target_date: {
     message: "set the due date to",
-    icon: <Icon iconName="calendar_today" className="!text-sm" aria-hidden="true" />,
+    Icon: CalendarTodayOutlined,
   },
   parent: {
     message: "set the parent to",
-    icon: <Icon iconName="supervised_user_circle" className="!text-sm" aria-hidden="true" />,
+    Icon: SupervisedUserCircleOutlined,
   },
   issue: {
     message: "deleted the issue.",
-    icon: <Icon iconName="delete" className="!text-sm" aria-hidden="true" />,
+    Icon: DeleteOutlineOutlined,
   },
   estimate: {
     message: "updated the estimate",
-    icon: <Icon iconName="change_history" className="!text-sm" aria-hidden="true" />,
+    Icon: ChangeHistoryOutlined,
   },
   link: {
     message: "updated the link",
-    icon: <Icon iconName="link" className="!text-sm" aria-hidden="true" />,
+    Icon: LinkOutlined,
   },
   attachment: {
     message: "updated the attachment",
-    icon: <Icon iconName="attach_file" className="!text-sm" aria-hidden="true" />,
+    Icon: AttachFileOutlined,
   },
   archived_at: {
     message: "archived",
-    icon: <Icon iconName="archive" className="!text-sm text-custom-text-200" aria-hidden="true" />,
+    Icon: ArchiveOutlined,
   },
 };
 
@@ -103,41 +117,43 @@ export const Feeds: React.FC<any> = ({ activities }) => (
   <div>
     <ul role="list" className="-mb-4">
       {activities.map((activity: any, activityIdx: number) => {
-        // determines what type of action is performed
-        let action = activityDetails[activity.field as keyof typeof activityDetails]?.message;
+        const activityType = activityDetails[activity.field as keyof typeof activityDetails];
+
+        let message = activityType?.message;
+
         if (activity.field === "labels") {
-          action = activity.new_value !== "" ? "added a new label" : "removed the label";
+          message = activity.new_value !== "" ? "added a new label" : "removed the label";
         } else if (activity.field === "blocking") {
-          action =
+          message =
             activity.new_value !== ""
               ? "marked this issue is blocking"
               : "removed the issue from blocking";
         } else if (activity.field === "blocks") {
-          action =
+          message =
             activity.new_value !== "" ? "marked this issue being blocked by" : "removed blocker";
         } else if (activity.field === "target_date") {
-          action =
+          message =
             activity.new_value && activity.new_value !== ""
               ? "set the due date to"
               : "removed the due date";
         } else if (activity.field === "parent") {
-          action =
+          message =
             activity.new_value && activity.new_value !== ""
               ? "set the parent to"
               : "removed the parent";
         } else if (activity.field === "priority") {
-          action =
+          message =
             activity.new_value && activity.new_value !== ""
               ? "set the priority to"
               : "removed the priority";
         } else if (activity.field === "description") {
-          action = "updated the";
+          message = "updated the";
         } else if (activity.field === "attachment") {
-          action = `${activity.verb} the`;
+          message = `${activity.verb} the`;
         } else if (activity.field === "link") {
-          action = `${activity.verb} the`;
+          message = `${activity.verb} the`;
         } else if (activity.field === "archived_at") {
-          action =
+          message =
             activity.new_value && activity.new_value === "restore"
               ? "restored the issue"
               : "archived the issue";
@@ -204,9 +220,17 @@ export const Feeds: React.FC<any> = ({ activities }) => (
                 <div className="relative px-1">
                   {activity.field ? (
                     activity.new_value === "restore" ? (
-                      <Icon iconName="history" className="text-sm text-custom-text-200" />
+                      <HistoryOutlined
+                        sx={{
+                          fontSize: 14,
+                        }}
+                      />
                     ) : (
-                      activityDetails[activity.field as keyof typeof activityDetails]?.icon
+                      <activityType.Icon
+                        sx={{
+                          fontSize: 14,
+                        }}
+                      />
                     )
                   ) : activity.actor_detail.avatar && activity.actor_detail.avatar !== "" ? (
                     <img
@@ -276,7 +300,11 @@ export const Feeds: React.FC<any> = ({ activities }) => (
                         <div className="mt-1.5">
                           <div className="ring-6 flex h-7 w-7 items-center justify-center rounded-full bg-custom-background-80 text-custom-text-200 ring-white">
                             {activity.field ? (
-                              activityDetails[activity.field as keyof typeof activityDetails]?.icon
+                              <activityType.Icon
+                                sx={{
+                                  fontSize: 14,
+                                }}
+                              />
                             ) : activity.actor_detail.avatar &&
                               activity.actor_detail.avatar !== "" ? (
                               <img
@@ -309,7 +337,7 @@ export const Feeds: React.FC<any> = ({ activities }) => (
                               : " " + activity.actor_detail.last_name}
                           </span>
                         )}
-                        <span> {action} </span>
+                        <span> {message} </span>
                         {activity.field !== "archived_at" && (
                           <span className="text-xs font-medium text-custom-text-100">
                             {" "}

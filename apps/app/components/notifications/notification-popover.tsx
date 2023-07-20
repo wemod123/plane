@@ -12,10 +12,18 @@ import useWorkspaceMembers from "hooks/use-workspace-members";
 import useUserNotification from "hooks/use-user-notifications";
 
 // components
-import { Icon, Loader, EmptyState, Tooltip } from "components/ui";
+import { Loader, EmptyState, Tooltip } from "components/ui";
 import { SnoozeNotificationModal, NotificationCard } from "components/notifications";
 // icons
-import { NotificationsOutlined } from "@mui/icons-material";
+import {
+  ArchiveOutlined,
+  ArrowBackOutlined,
+  CloseOutlined,
+  FilterListOutlined,
+  NotificationsOutlined,
+  RefreshOutlined,
+  ScheduleOutlined,
+} from "@mui/icons-material";
 // images
 import emptyNotification from "public/empty-state/notification.svg";
 // helpers
@@ -119,8 +127,8 @@ export const NotificationPopover = () => {
               leaveTo="opacity-0 translate-y-1"
             >
               <Popover.Panel className="absolute bg-custom-background-100 flex flex-col left-0 md:left-full ml-8 z-10 top-0 md:w-[36rem] w-[20rem] h-[50vh] border border-custom-border-300 shadow-lg rounded-xl">
-                <div className="flex items-center justify-between px-5 pt-5">
-                  <h2 className="text-xl font-semibold mb-2">Notifications</h2>
+                <div className="flex items-center justify-between px-5 pt-5 mb-2">
+                  <h2 className="text-xl font-semibold">Notifications</h2>
                   <div className="flex gap-x-4 justify-center items-center text-custom-text-200">
                     <Tooltip tooltipContent="Refresh">
                       <button
@@ -134,8 +142,13 @@ export const NotificationPopover = () => {
                             target?.classList.remove("animate-spin");
                           }, 1000);
                         }}
+                        className="grid place-items-center"
                       >
-                        <Icon iconName="refresh" />
+                        <RefreshOutlined
+                          sx={{
+                            fontSize: 18,
+                          }}
+                        />
                       </button>
                     </Tooltip>
                     <Tooltip tooltipContent="Unread notifications">
@@ -146,8 +159,13 @@ export const NotificationPopover = () => {
                           setArchived(false);
                           setReadNotification((prev) => !prev);
                         }}
+                        className="grid place-items-center"
                       >
-                        <Icon iconName="filter_list" />
+                        <FilterListOutlined
+                          sx={{
+                            fontSize: 18,
+                          }}
+                        />
                       </button>
                     </Tooltip>
                     <Tooltip tooltipContent="Snoozed notifications">
@@ -158,8 +176,13 @@ export const NotificationPopover = () => {
                           setReadNotification(false);
                           setSnoozed((prev) => !prev);
                         }}
+                        className="grid place-items-center"
                       >
-                        <Icon iconName="schedule" />
+                        <ScheduleOutlined
+                          sx={{
+                            fontSize: 18,
+                          }}
+                        />
                       </button>
                     </Tooltip>
                     <Tooltip tooltipContent="Archived notifications">
@@ -170,12 +193,25 @@ export const NotificationPopover = () => {
                           setReadNotification(false);
                           setArchived((prev) => !prev);
                         }}
+                        className="grid place-items-center"
                       >
-                        <Icon iconName="archive" />
+                        <ArchiveOutlined
+                          sx={{
+                            fontSize: 18,
+                          }}
+                        />
                       </button>
                     </Tooltip>
-                    <button type="button" onClick={() => closePopover()}>
-                      <Icon iconName="close" />
+                    <button
+                      type="button"
+                      onClick={() => closePopover()}
+                      className="grid place-items-center"
+                    >
+                      <CloseOutlined
+                        sx={{
+                          fontSize: 18,
+                        }}
+                      />
                     </button>
                   </div>
                 </div>
@@ -190,7 +226,11 @@ export const NotificationPopover = () => {
                       }}
                     >
                       <h4 className="flex items-center gap-2 pb-4">
-                        <Icon iconName="arrow_back" />
+                        <ArrowBackOutlined
+                          sx={{
+                            fontSize: 18,
+                          }}
+                        />
                         <span className="ml-2 font-medium">
                           {snoozed
                             ? "Snoozed Notifications"

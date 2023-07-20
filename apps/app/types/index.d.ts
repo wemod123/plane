@@ -5,6 +5,7 @@ export * from "./projects";
 export * from "./state";
 export * from "./invitation";
 export * from "./issues";
+export * from "./misc";
 export * from "./modules";
 export * from "./views";
 export * from "./integration";

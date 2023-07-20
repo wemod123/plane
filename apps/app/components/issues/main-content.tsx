@@ -53,6 +53,7 @@ export const IssueMainContent: React.FC<Props> = ({
           )
       : null
   );
+  const siblingIssuesList = siblingIssues?.sub_issues.filter((i) => i.id !== issueDetails.id);
 
   return (
     <>
@@ -77,29 +78,28 @@ export const IssueMainContent: React.FC<Props> = ({
             </Link>
 
             <CustomMenu position="left" ellipsis>
-              {siblingIssues && siblingIssues.sub_issues.length > 0 ? (
-                <>
-                  <h2 className="text-custom-text-200 px-1 mb-2">Sibling issues</h2>
-                  {siblingIssues.sub_issues.map((issue) => {
-                    if (issue.id !== issueDetails.id)
-                      return (
-                        <CustomMenu.MenuItem
-                          key={issue.id}
-                          renderAs="a"
-                          href={`/${workspaceSlug}/projects/${projectId as string}/issues/${
-                            issue.id
-                          }`}
-                        >
-                          {issueDetails.project_detail.identifier}-{issue.sequence_id}
-                        </CustomMenu.MenuItem>
-                      );
-                  })}
-                </>
-              ) : (
-                <p className="flex items-center gap-2 whitespace-nowrap px-1 text-left text-xs text-custom-text-200 py-1">
-                  No sibling issues
-                </p>
-              )}
+              {siblingIssuesList ? (
+                siblingIssuesList.length > 0 ? (
+                  <>
+                    <h2 className="text-custom-text-200 px-1 mb-2">Sibling issues</h2>
+                    {siblingIssuesList.map((issue) => (
+                      <CustomMenu.MenuItem
+                        key={issue.id}
+                        renderAs="a"
+                        href={`/${workspaceSlug}/projects/${projectId as string}/issues/${
+                          issue.id
+                        }`}
+                      >
+                        {issueDetails.project_detail.identifier}-{issue.sequence_id}
+                      </CustomMenu.MenuItem>
+                    ))}
+                  </>
+                ) : (
+                  <p className="flex items-center gap-2 whitespace-nowrap px-1 text-left text-xs text-custom-text-200 py-1">
+                    No sibling issues
+                  </p>
+                )
+              ) : null}
               <CustomMenu.MenuItem
                 renderAs="button"
                 onClick={() => submitChanges({ parent: null })}

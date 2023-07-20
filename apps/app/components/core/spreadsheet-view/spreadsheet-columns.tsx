@@ -46,9 +46,7 @@ export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateCo
               }`}
             >
               {col.propertyName === "title" ? (
-                <div
-                  className={`flex items-center justify-start gap-1.5 cursor-default text-sm text-custom-text-200 text-current w-full py-2.5 px-2`}
-                >
+                <div className="flex items-center justify-start gap-1.5 cursor-default text-sm text-custom-text-200 w-full py-2.5 px-2">
                   {col.colName}
                 </div>
               ) : (

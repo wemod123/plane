@@ -8,21 +8,21 @@ import projectService from "services/project.service";
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
+// hooks
+import useIssuesView from "hooks/use-issues-view";
 // helper
 import { truncateText } from "helpers/string.helper";
 // components
 import { IssuesFilterView, IssuesView } from "components/core";
 // ui
-import { Icon } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { ArchiveOutlined } from "@mui/icons-material";
 // types
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS } from "constants/fetch-keys";
-import useIssuesView from "hooks/use-issues-view";
-import { useEffect } from "react";
 
 const ProjectArchivedIssues: NextPage = () => {
   const router = useRouter();
@@ -61,7 +61,11 @@ const ProjectArchivedIssues: NextPage = () => {
               onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/issues/`)}
               className="flex items-center gap-1.5 rounded-full border border-custom-border-200 px-3 py-1.5 text-xs"
             >
-              <Icon iconName="archive" className="text-base" />
+              <ArchiveOutlined
+                sx={{
+                  fontSize: 18,
+                }}
+              />
               <span>Archived Issues</span>
 
               <XMarkIcon className="h-3 w-3" />

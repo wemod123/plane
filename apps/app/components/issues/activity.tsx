@@ -11,94 +11,108 @@ import useEstimateOption from "hooks/use-estimate-option";
 // components
 import { CommentCard } from "components/issues/comment";
 // ui
-import { Icon, Loader } from "components/ui";
+import { Loader } from "components/ui";
 // icons
-import { Squares2X2Icon } from "@heroicons/react/24/outline";
-import { BlockedIcon, BlockerIcon } from "components/icons";
+import {
+  ArchiveOutlined,
+  AttachFileOutlined,
+  CalendarTodayOutlined,
+  ChangeHistoryOutlined,
+  ChatOutlined,
+  ContrastOutlined,
+  DatasetOutlined,
+  GridViewOutlined,
+  GroupOutlined,
+  HistoryOutlined,
+  LinkOutlined,
+  SellOutlined,
+  SignalCellularAltOutlined,
+  SupervisedUserCircleOutlined,
+} from "@mui/icons-material";
 // helpers
 import { renderShortDateWithYearFormat, timeAgo } from "helpers/date-time.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { ICurrentUserResponse, IIssueComment, IIssueLabels } from "types";
+import { ICurrentUserResponse, IIssueComment, IIssueLabels, MaterialIcon } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY, PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 
 const activityDetails: {
   [key: string]: {
     message?: string;
-    icon: JSX.Element;
+    Icon: MaterialIcon;
   };
 } = {
   assignee: {
     message: "removed the assignee",
-    icon: <Icon iconName="group" className="!text-sm" aria-hidden="true" />,
+    Icon: GroupOutlined,
   },
   assignees: {
     message: "added a new assignee",
-    icon: <Icon iconName="group" className="!text-sm" aria-hidden="true" />,
+    Icon: GroupOutlined,
   },
   blocks: {
     message: "marked this issue being blocked by",
-    icon: <BlockedIcon height="12" width="12" color="#6b7280" />,
+    Icon: GroupOutlined,
   },
   blocking: {
     message: "marked this issue is blocking",
-    icon: <BlockerIcon height="12" width="12" color="#6b7280" />,
+    Icon: GroupOutlined,
   },
   cycles: {
     message: "set the cycle to",
-    icon: <Icon iconName="contrast" className="!text-sm" aria-hidden="true" />,
+    Icon: ContrastOutlined,
   },
   estimate_point: {
     message: "set the estimate point to",
-    icon: <Icon iconName="change_history" className="!text-sm" aria-hidden="true" />,
+    Icon: ChangeHistoryOutlined,
   },
   labels: {
-    icon: <Icon iconName="sell" className="!text-sm" aria-hidden="true" />,
+    Icon: SellOutlined,
   },
   modules: {
     message: "set the module to",
-    icon: <Icon iconName="dataset" className="!text-sm" aria-hidden="true" />,
+    Icon: DatasetOutlined,
   },
   state: {
     message: "set the state to",
-    icon: <Squares2X2Icon className="h-3 w-3" aria-hidden="true" />,
+    Icon: GridViewOutlined,
   },
   priority: {
     message: "set the priority to",
-    icon: <Icon iconName="signal_cellular_alt" className="!text-sm" aria-hidden="true" />,
+    Icon: SignalCellularAltOutlined,
   },
   name: {
     message: "set the name to",
-    icon: <Icon iconName="chat" className="!text-sm" aria-hidden="true" />,
+    Icon: ChatOutlined,
   },
   description: {
     message: "updated the description.",
-    icon: <Icon iconName="chat" className="!text-sm" aria-hidden="true" />,
+    Icon: ChatOutlined,
   },
   target_date: {
     message: "set the due date to",
-    icon: <Icon iconName="calendar_today" className="!text-sm" aria-hidden="true" />,
+    Icon: CalendarTodayOutlined,
   },
   parent: {
     message: "set the parent to",
-    icon: <Icon iconName="supervised_user_circle" className="!text-sm" aria-hidden="true" />,
+    Icon: SupervisedUserCircleOutlined,
   },
   estimate: {
     message: "updated the estimate",
-    icon: <Icon iconName="change_history" className="!text-sm" aria-hidden="true" />,
+    Icon: ChangeHistoryOutlined,
   },
   link: {
     message: "updated the link",
-    icon: <Icon iconName="link" className="!text-sm" aria-hidden="true" />,
+    Icon: LinkOutlined,
   },
   attachment: {
     message: "updated the attachment",
-    icon: <Icon iconName="attach_file" className="!text-sm" aria-hidden="true" />,
+    Icon: AttachFileOutlined,
   },
   archived_at: {
     message: "archived",
-    icon: <Icon iconName="archive" className="!text-sm" aria-hidden="true" />,
+    Icon: ArchiveOutlined,
   },
 };
 
@@ -166,10 +180,11 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
 
   const getLabelColor = (labelId: string) => {
     if (!issueLabels) return;
+
     const label = issueLabels.find((label) => label.id === labelId);
-    if (typeof label !== "undefined") {
-      return label.color !== "" ? label.color : "#000000";
-    }
+
+    if (typeof label !== "undefined") return label.color !== "" ? label.color : "#000000";
+
     return "#000000";
   };
 
@@ -196,55 +211,57 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
     <div className="flow-root">
       <ul role="list" className="-mb-4">
         {issueActivities.map((activityItem, activityItemIdx) => {
-          // determines what type of action is performed
-          let action = activityDetails[activityItem.field as keyof typeof activityDetails]?.message;
+          const activityType = activityDetails[activityItem.field as keyof typeof activityDetails];
+
+          let message = activityType?.message;
+
           if (activityItem.field === "labels") {
-            action = activityItem.new_value !== "" ? "added a new label" : "removed the label";
+            message = activityItem.new_value !== "" ? "added a new label" : "removed the label";
           } else if (activityItem.field === "blocking") {
-            action =
+            message =
               activityItem.new_value !== ""
                 ? "marked this issue is blocking"
                 : "removed the issue from blocking";
           } else if (activityItem.field === "blocks") {
-            action =
+            message =
               activityItem.new_value !== ""
                 ? "marked this issue being blocked by"
                 : "removed blocker";
           } else if (activityItem.field === "target_date") {
-            action =
+            message =
               activityItem.new_value && activityItem.new_value !== ""
                 ? "set the due date to"
                 : "removed the due date";
           } else if (activityItem.field === "parent") {
-            action =
+            message =
               activityItem.new_value && activityItem.new_value !== ""
                 ? "set the parent to"
                 : "removed the parent";
           } else if (activityItem.field === "priority") {
-            action =
+            message =
               activityItem.new_value && activityItem.new_value !== ""
                 ? "set the priority to"
                 : "removed the priority";
           } else if (activityItem.field === "description") {
-            action = "updated the";
+            message = "updated the";
           } else if (activityItem.field === "attachment") {
-            action = `${activityItem.verb} the`;
+            message = `${activityItem.verb} the`;
           } else if (activityItem.field === "link") {
-            action = `${activityItem.verb} the`;
+            message = `${activityItem.verb} the`;
           } else if (activityItem.field === "estimate") {
-            action = "updated the";
+            message = "updated the";
           } else if (activityItem.field === "cycles") {
-            action =
+            message =
               activityItem.new_value && activityItem.new_value !== ""
                 ? "set the cycle to"
                 : "removed the cycle";
           } else if (activityItem.field === "modules") {
-            action =
+            message =
               activityItem.new_value && activityItem.new_value !== ""
                 ? "set the module to"
                 : "removed the module";
           } else if (activityItem.field === "archived_at") {
-            action =
+            message =
               activityItem.new_value && activityItem.new_value === "restore"
                 ? "restored the issue"
                 : "archived the issue";
@@ -341,14 +358,17 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
                             <div className="ring-6 flex h-7 w-7 items-center justify-center rounded-full bg-custom-background-80 text-custom-text-200 ring-white">
                               {activityItem.field ? (
                                 activityItem.new_value === "restore" ? (
-                                  <Icon
-                                    iconName="history"
-                                    className="text-sm text-custom-text-200"
+                                  <HistoryOutlined
+                                    sx={{
+                                      fontSize: 14,
+                                    }}
                                   />
                                 ) : (
-                                  activityDetails[
-                                    activityItem.field as keyof typeof activityDetails
-                                  ]?.icon
+                                  <activityType.Icon
+                                    sx={{
+                                      fontSize: 14,
+                                    }}
+                                  />
                                 )
                               ) : activityItem.actor_detail.avatar &&
                                 activityItem.actor_detail.avatar !== "" ? (
@@ -383,7 +403,7 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
                                 : " " + activityItem.actor_detail.last_name}
                             </span>
                           )}
-                          <span> {action} </span>
+                          <span> {message} </span>
                           {activityItem.field !== "archived_at" && (
                             <span className="text-xs font-medium text-custom-text-100">
                               {" "}
