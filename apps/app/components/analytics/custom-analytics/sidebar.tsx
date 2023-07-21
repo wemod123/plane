@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
@@ -53,6 +55,8 @@ export const AnalyticsSidebar: React.FC<Props> = ({
   isProjectLevel = false,
   user,
 }) => {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
@@ -379,12 +383,17 @@ export const AnalyticsSidebar: React.FC<Props> = ({
           onClick={() => {
             if (!workspaceSlug) return;
 
-            mutate(ANALYTICS(workspaceSlug.toString(), params));
+            setIsRefreshing(true);
+
+            mutate(ANALYTICS(workspaceSlug.toString(), params)).finally(() =>
+              setIsRefreshing(false)
+            );
           }}
+          loading={isRefreshing}
         >
           <div className="flex items-center gap-2 -my-1">
-            <ArrowPathIcon className="h-3.5 w-3.5" />
-            Refresh
+            <ArrowPathIcon className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""} `} />
+            {isRefreshing ? "Refreshing..." : "Refresh"}
           </div>
         </SecondaryButton>
         <PrimaryButton onClick={exportAnalytics}>
