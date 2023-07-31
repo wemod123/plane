@@ -12,7 +12,7 @@ const trackEvent =
 
 class PageServices extends APIService {
   constructor() {
-    super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
+    super(NEXT_PUBLIC_API_BASE_URL || "http://plane-api:8000");
   }
 
   async createPage(
